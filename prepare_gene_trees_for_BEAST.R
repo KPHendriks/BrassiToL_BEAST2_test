@@ -8,7 +8,7 @@ species_tree<-ape::read.tree(file = "iqtree_ML_tree.tree")
 #Get tip names. These should all be present in gene trees also.
 tips<-species_tree$tip.label
 
-#Read list of nexus files.
+#Read list of fasta files.
 alignments<-list.files(path= "data_gene_trees_clocklike/",
                        pattern = "_taper_final_inclusive.fasta")
 
