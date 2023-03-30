@@ -8,7 +8,7 @@ species_tree<-ape::read.tree(file = "iqtree_ML_tree.tree")
 #Get tip names. These should all be present in gene trees also.
 tips<-species_tree$tip.label
 
-#Read list of fasta files.
+#Read list of nexus files.
 alignments<-list.files(path= "data_gene_trees_clocklike/",
                        pattern = "_taper_final_inclusive.fasta")
 
@@ -47,5 +47,32 @@ for (a in 1:length(alignments)){
   
   chopper::alg2nex(file = paste0("data_gene_trees_clocklike/", gene, "_ready_for_BEAST2.fasta"),
                    format = "fasta")
-  
 }
+
+
+#Export species tree without branch lenghts as input for BEAST2 calibration.
+species_tree_wo_branch_lenghts<-species_tree
+species_tree_wo_branch_lenghts$edge.length<-NULL
+ape::write.tree(species_tree_wo_branch_lenghts,
+                file = "iqtree_ML_tree_wo_branch_lengths.nwk")
+
+#Export a species tree with depth of Brassicales crown roughly set to 90 mya.
+#First need to rescale the species tree.
+species_tree_roughly_crown_age<-species_tree
+species_tree_roughly_crown_age$edge.length<-species_tree_roughly_crown_age$edge.length*(90/max(node.depth.edgelength(species_tree)))
+#Check results.
+max(node.depth.edgelength(species_tree_roughly_crown_age))
+#Export the species tree.
+ape::write.tree(species_tree_roughly_crown_age,
+                file = "species_tree_roughly_crown_age.nwk")
+
+
+
+###TEMP CHECK TREES FROM BEAST2
+
+library(treeio)
+trees_temp<-treeio::read.beast(file="species_tree_export_FigTree.trees")
+
+trees_temp
+
+
